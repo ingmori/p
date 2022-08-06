@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+<body>
+
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    body {
+        background: #000000;
+        color: #c0c0c0;
+    }
+    input {
+        background: #000000;
+        color: #808080;
+        border: 1px solid #808080;
+    }
+    .content {
+        position: absolute;
+        bottom: 0;
+    }
+    video { display: none }
+    canvas { display: none }
+    #info { width: 100% }
+    button {
+        background: #202020;
+        color: #e0e0e0;
+        border: 1px solid #808080;
+        padding: 30px
+    }
+
+    #photoContainer {
+        display: none;
+        overflow: scroll;
+        width: 100vw;
+        white-space: nowrap;
+    }
+
+    #photoContainer.show {
+        display: block;
+    }
+
+</style>
+
+<div class=content>
+    <button onclick="fullScreen()">F</button>
+    <button id=startStop onclick="startStop()">-</button>
+    <button id=nrPhotosTaken onclick="showPhotos()">0</button>
+    <input id=info>
+    <div id=photoContainer></div>
+    v0.00011
+</div>
+
+<script>
+
+mode  = 'off';
+video = null;
+nrPhotosTaken = 0;
+
+async function start() {
+    let stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: false,
+        video: {
+            width: 6000,
+            height: 8000,
+        },
+        facingMode: 'environment'
+    });
+    video = document.createElement('video');
+    video.srcObject = stream;
+    await video.play();
+    document.querySelector('#info').value = video.videoWidth + ' x ' + video.videoHeight;
+    mode = "running";
+    document.querySelector('#startStop').innerHTML = "+";
+    // window.setTimeout(takePhoto,5000);
+    await takePhoto();
+}
+
+async function stop() {
+    mode = "off";
+    document.querySelector('#startStop').innerHTML = "-";
+}
+
+async function startStop() {
+    if (mode == 'off') await start();
+    else               await stop();
+}
+
+function showPhotos() {
+    let cl =  document.querySelector('#photoContainer').classList;
+    if (cl.contains('show')) {
+        cl.remove('show');
+    }
+    else {
+        let cmd = prompt('Cmd');
+        if (cmd === 'dpnow') cl.add('show');
+    }
+}
+
+canvas = document.createElement('canvas');
+
+imgNr = 1;
+
+function takePhoto() {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+    let data_url = canvas.toDataURL('image/jpeg');
+    let img = document.createElement('img');
+    img.style.maxHeight = "100px";
+    img.src = data_url;
+    let photoContainer = document.querySelector('#photoContainer');
+    photoContainer.appendChild(img);
+    nrPhotosTaken++;
+    document.querySelector('#nrPhotosTaken').innerHTML = nrPhotosTaken;
+    if (mode == 'running') window.setTimeout(takePhoto,1000);
+};
+
+function fullScreen() {
+    let elem = document.documentElement;
+
+    elem.requestFullscreen({ navigationUI: "show" }).then(() => {}).catch((err) => {
+      alert(`Error: ${err.message} (${err.name})`);
+    });
+}
+
+</script>
+    </body>
+</html>
