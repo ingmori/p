@@ -107,14 +107,31 @@ canvas = document.createElement('canvas');
 
 imgNr = 1;
 
+function imageClick(e) {
+    const t = e.target;
+    downloadURI(t.src, 'photopage_'+t.time+'.jpg');
+}
+
+function downloadURI(uri, name) {
+  var link = document.createElement("a");
+  link.download = name;
+  link.href = uri;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  delete link;
+}
+
 function takePhoto() {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
     let data_url = canvas.toDataURL('image/jpeg');
     let img = document.createElement('img');
+    img.time = new Date().getTime();
     img.style.maxHeight = "100px";
     img.src = data_url;
+    img.onclick=imageClick;
     let photoContainer = document.querySelector('#photoContainer');
     photoContainer.appendChild(img);
     nrPhotosTaken++;
