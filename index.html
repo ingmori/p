@@ -146,12 +146,18 @@ function takePhoto() {
     if (mode == 'running') window.setTimeout(takePhoto,1000);
 };
 
+screenMode = 'normal';
+
 function fullScreen() {
     let elem = document.documentElement;
 
-    elem.requestFullscreen({ navigationUI: "show" }).then(() => {}).catch((err) => {
-      alert(`Error: ${err.message} (${err.name})`);
-    });
+    if (screenMode == 'normal') {
+        elem.requestFullscreen();
+        screenMode = 'fullScreen';
+    } else {
+        document.exitFullscreen();
+        screenMode = 'normal';
+    }
 }
 
 </script>
