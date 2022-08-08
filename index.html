@@ -45,15 +45,22 @@
         display: block;
     }
 
+    #fullScreen, #startStop {
+        font-size: 600%;
+        padding-left: 1em;
+        padding-right: 1em;
+        color: #fff;
+    }
+
 </style>
 
 <div class=content>
-    <button onclick="fullScreen()">F</button>
+    <button id=fullScreen onclick="fullScreen()">F</button>
     <button id=startStop onclick="startStop()">-</button>
     <button id=nrPhotosTaken onclick="showPhotos()">0</button>
     <input id=info>
     <div id=photoContainer></div>
-    v0.00012
+    v0.00011
 </div>
 
 <script>
