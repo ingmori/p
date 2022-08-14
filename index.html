@@ -87,11 +87,13 @@ async function start() {
     document.querySelector('#startStop').innerHTML = "+";
     // window.setTimeout(takePhoto,5000);
     await takePhoto();
+    document.documentElement.requestFullscreen();
 }
 
 async function stop() {
     mode = "off";
     document.querySelector('#startStop').innerHTML = "-";
+    document.exitFullscreen();
 }
 
 async function startStop() {
@@ -159,6 +161,10 @@ function fullScreen() {
         screenMode = 'normal';
     }
 }
+
+window.onbeforeunload = function(){
+    return 'Really leave?';
+};
 
 </script>
     </body>
